@@ -1,4 +1,5 @@
 ﻿using Ovomind;
+using OvomindEmotions.Config;
 using OvomindEmotions.Ovomind.Protocol;
 using SocketIO.Core;
 using SocketIO.Serializer.NewtonsoftJson;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace OvomindEmotions.Ovomind
 {
@@ -52,6 +54,16 @@ namespace OvomindEmotions.Ovomind
             m_Socket.On("user:joined", (response) => { });
             m_Socket.On("user:join", (response) => { });
 
+            if (Configuration.LogSocketMessages.Value)
+            {
+                m_Socket.OnAny((eventName, response) =>
+                {
+                    Plugin.Logger.LogInfo($"SocketIO event: {eventName}, response : {response}");
+                });
+            }
+
+            Plugin.Logger.LogInfo($"SocketIO connection...");
+
             await m_Socket.ConnectAsync();
         }
 
@@ -65,15 +77,18 @@ namespace OvomindEmotions.Ovomind
 
         private void OnError(object sender, string e)
         {
+            Plugin.Logger.LogError($"SocketIO error: {e}");
         }
 
         private void OnConnected(object sender, EventArgs e)
         {
+            Plugin.Logger.LogInfo("SocketIO connected");
             m_Socket.EmitAsync("user:join", "");
         }
 
         private void OnDisconnected(object sender, string e)
         {
+            Plugin.Logger.LogInfo("SocketIO disconnected");
         }
 
         private void OnSessionMetrics(SocketIOResponse response)

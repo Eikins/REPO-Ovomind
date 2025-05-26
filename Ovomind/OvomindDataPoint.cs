@@ -18,7 +18,7 @@ namespace OvomindEmotions.Ovomind
         public float Latency { get; }
         public RoundtripLatency RoundtripLatency { get; }
 
-        public float Simple_br => BPM / 4;
+        public float SimpleBr => BPM / 4;
 
         public OvomindDataPoint(
             int bpm, 

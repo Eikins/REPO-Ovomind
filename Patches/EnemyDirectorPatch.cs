@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Ovomind;
+using OvomindEmotions.Ovomind;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -47,19 +48,20 @@ namespace OvomindEmotions.Patches
         {
             var emotions = (Emotion[]) Enum.GetValues(typeof(Emotion));
             Plugin.Logger.LogInfo($"Emotions: [{string.Join(", ", emotions)}]");
-            int emotionIndex = 0;
+            //int emotionIndex = 0;
             while (true)
             {
-                emotionIndex = UnityEngine.Random.RandomRangeInt(0, emotions.Length);
-                Plugin.Logger.LogInfo($"CurrentEmotion: {emotions[emotionIndex]}");
+                //emotionIndex = UnityEngine.Random.RandomRangeInt(0, emotions.Length);
+                var dataPoint = OvomindAPI.GetLatestDataPoint();
+                Plugin.Logger.LogInfo($"CurrentEmotion: {dataPoint.ClosestEmotion}");
                 var postProcessing = PostProcessing.Instance;
                 if (postProcessing != null)
                 {
-                    postProcessing.vignetteColor = emotions[emotionIndex].GetColor();
+                    postProcessing.vignetteColor = dataPoint.ClosestEmotion.GetColor();
                     postProcessing.vignetteIntensity = 0.7f;
                 }
 
-                yield return new WaitForSeconds(4f);
+                yield return new WaitForSeconds(0.5f);
             }
         }
     }

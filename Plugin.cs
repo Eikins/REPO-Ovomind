@@ -1,10 +1,9 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using OvomindEmotions.Config;
+using OvomindEmotions.Ovomind;
 using OvomindEmotions.Patches;
-using System;
-using System.Collections;
-using UnityEngine;
 
 namespace OvomindEmotions;
 
@@ -19,11 +18,15 @@ public class Plugin : BaseUnityPlugin
 
     private Harmony m_Harmony = new Harmony(Guid);
         
-    private void Awake()
+    private async void Awake()
     {
         Logger = base.Logger;
         Logger.LogInfo($"Plugin {Guid} is loaded! Version {Version}");
 
+        Configuration.Init(Config);
+
         m_Harmony.PatchAll(typeof(EnemyDirectorPatch));
+
+        await OvomindAPI.InitializeAsync(Configuration.UserAccessToken.Value);
     }
 }
